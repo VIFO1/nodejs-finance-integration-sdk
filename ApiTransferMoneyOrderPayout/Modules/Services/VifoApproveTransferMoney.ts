@@ -39,8 +39,7 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
         const bodyObject = Object.fromEntries(sortBodyAlphabet);
 
         const payload = JSON.stringify(bodyObject);
-        console.log(payload);
-        
+
         const signatureString = timestamp + payload;
 
         const hmac = crypto.createHmac('sha256', secretKey);
@@ -49,7 +48,7 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
 
         const gen_hmac = hmac.digest('hex');
 
-        
+
         return gen_hmac;
     }
 

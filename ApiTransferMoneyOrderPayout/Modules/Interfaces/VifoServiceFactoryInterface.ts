@@ -7,7 +7,7 @@ interface VifoServiceFactoryInterface {
 
     performUserAuthentication(username: string, password: string): Promise<object>;
 
-    fetchBankInformation(body: object): Promise<string>;
+    fetchBankInformation(body: object): Promise<object>;
 
     fetchBeneficiaryName(body: object): Promise<object>;
 
@@ -31,7 +31,7 @@ interface VifoServiceFactoryInterface {
         sourceAccountNo: string
     ): Promise<object>;
 
-    createNevaOrder(
+    createSevaOrder(
         productCode: string,
         distributorOrderNumber: string,
         phone: string,

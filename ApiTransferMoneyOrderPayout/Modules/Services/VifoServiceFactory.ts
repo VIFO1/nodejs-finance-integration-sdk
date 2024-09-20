@@ -8,7 +8,7 @@ import VifoOtherRequest from './VifoOtherRequest';
 import VifoCreateOrder from './VifoCreateOrder';
 import VifoServiceFactoryInterface from '../Interfaces/VifoServiceFactoryInterface';
 
-class VifoServiceFactory implements VifoServiceFactoryInterface{
+class VifoServiceFactory implements VifoServiceFactoryInterface {
     private sendRequest: VifoSendRequest;
     private webhook: Webhook;
     private createOrder: VifoCreateOrder;
@@ -67,29 +67,28 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
     async performUserAuthentication(username: string, password: string): Promise<object> {
         const response = await this.loginAuthenticateUser.authenticateUser(this.headersLogin, username, password);
 
-        if ('status_code' in response) {
+        if ('errors' in response) {
             return {
-                status: 'errors',
                 message: 'Authentication failed',
                 status_code: 'status_code' in response ? response.status_code : ''
+
             };
         }
 
         return response;
     }
 
-    async fetchBankInformation(body: object): Promise<string> {
+    async fetchBankInformation(body: object): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
         const response = await this.bank.getBank(headers, body);
 
-        if ('status_code' in response) {
-            return JSON.stringify({
-                status: 'errors',
+        if ('success' in response) {
+            return {
                 body: 'body' in response ? response.body : '',
                 status_code: 'status_code' in response ? response.status_code : ''
-            }, null, 2);
+            };
         }
-        return JSON.stringify(response, null, 2);
+        return response;
     }
 
     async fetchBeneficiaryName(body: object): Promise<object> {
@@ -112,9 +111,8 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
 
         const response = await this.transferMoney.createTransferMoney(headers, body);
 
-        if ('status_code' in response) {
+        if ('success' in response) {
             return {
-                status: 'errors',
                 message: 'body' in response ? response.body : ''
             };
         }
@@ -124,11 +122,11 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
     async approveMoneyTransfer(secretKey: string, timestamp: string, body: object): Promise<object> {
         const headers = this.getAuthorizationHeaders('admin');
 
-        const requestSignature =  this.approveTransferMoney.createSignature(secretKey, timestamp, body);
+        const requestSignature = this.approveTransferMoney.createSignature(secretKey, timestamp, body);
 
         headers['x-request-timestamp'] = `${timestamp}`;
         headers['x-request-signature'] = `${requestSignature}`;
-        
+
         const response = await this.approveTransferMoney.approveTransfers(secretKey, timestamp, headers, body);
 
         if ('errors' in response) {
@@ -147,7 +145,6 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         }
         return true;
     }
-
     async processOtherRequest(key: string): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
 
@@ -187,7 +184,6 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
             'source_account_no': sourceAccountNo,
         }
         const response = await this.createOrder.createOrder(headers, body);
-
         if ('errors' in response) {
             return {
                 status: 'errors',
@@ -198,7 +194,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         return response;
     }
 
-    async createNevaOrder(
+    async createSevaOrder(
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
@@ -209,7 +205,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         comment: string,
         sourceAccountNo: string
     ): Promise<object> {
-        return this.createRevaOrder(
+        return await this.createRevaOrder(
             productCode,
             distributorOrderNumber,
             phone,

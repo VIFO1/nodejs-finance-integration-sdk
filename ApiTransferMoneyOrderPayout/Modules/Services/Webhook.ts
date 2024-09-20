@@ -1,6 +1,8 @@
 import crypto from 'crypto';
-class Webhook {
-    validate(secretKey:string, timestamp:string, body:object) {
+import WebhookInterface from '../Interfaces/WebhookInterface';
+
+class Webhook implements WebhookInterface{
+    validate(secretKey: string, timestamp: string, body: object): string[] {
         const errors = [];
 
         if (secretKey == '' || typeof secretKey !== 'string') {
@@ -17,8 +19,8 @@ class Webhook {
 
         return errors;
     }
-    createSignature(secretKey:string, timestamp:string, body:object) {
-     
+    createSignature(secretKey: string, timestamp: string, body: object): string {
+
         const bodyArray = Object.entries(body);
 
         const sortBodyAlphabet = bodyArray.sort(([a], [b]) => a.localeCompare(b));
@@ -39,11 +41,11 @@ class Webhook {
         return gen_hmac;
     }
 
-    async handleSignnature(data:object, requestSignature:string, secretKey:string, timestamp:string) {
+    async handleSignnature(data: object, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
         const errors = this.validate(secretKey, timestamp, data);
 
         if (errors.length > 0) {
-            return { errors: errors };
+            throw new Error('Validation errors: ' + errors);
         }
 
         const generatedSignature = await this.createSignature(secretKey, timestamp, data);

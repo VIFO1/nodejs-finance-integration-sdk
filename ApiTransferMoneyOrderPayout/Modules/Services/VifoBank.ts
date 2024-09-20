@@ -7,7 +7,7 @@ class VifoBank implements VifoBankInterface {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateBody(headers: object, body: object) {
+    validateBody(headers: object, body: object): string[] {
         const errors = [];
 
         if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
@@ -29,6 +29,7 @@ class VifoBank implements VifoBankInterface {
 
         return await this.sendRequest.sendRequest("GET", endpoint, headers, body);
     }
+
 
     async getBeneficiaryName(headers: object, body: object): Promise<object> {
         const endpoint = '/v2/finance/napas/receiver';
