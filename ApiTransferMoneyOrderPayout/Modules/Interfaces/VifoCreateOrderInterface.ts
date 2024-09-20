@@ -1,5 +1,7 @@
+import HeaderInterface from "./HeaderInterface";
+import BodyCreateOrderInterface from "./BodyCreateOrderInterface";
 interface VifoCreateOrderInterface {
-    validateRequestInput(headers: object, body: object): string[];
-    createOrder(headers: object, body: object): Promise<object>;
+    validateRequestInput(headers: HeaderInterface, body: BodyCreateOrderInterface): string[];
+    createOrder(headers: HeaderInterface, body: BodyCreateOrderInterface): Promise<object>;
 }
 export default VifoCreateOrderInterface;

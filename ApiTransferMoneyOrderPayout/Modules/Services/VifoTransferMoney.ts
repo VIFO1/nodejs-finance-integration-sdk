@@ -1,13 +1,14 @@
 import VifoSendRequest from './VifoSendRequest';
 import VifoTransferMoneyInterface from '../Interfaces/VifoTransferMoneyInterface';
-
+import HeaderInterface from '../Interfaces/HeaderInterface';
+import BodyTransferMoneyInterface from '../Interfaces/BodyTransferMoneyInterface';
 class VifoTransferMoney implements VifoTransferMoneyInterface {
     private sendRequest: VifoSendRequest;
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateRequestInput(headers: object, body: object): string[] {
+    validateRequestInput(headers: HeaderInterface, body: BodyTransferMoneyInterface): string[] {
         const errors = [];
 
         if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
@@ -20,7 +21,7 @@ class VifoTransferMoney implements VifoTransferMoneyInterface {
         return errors;
     }
 
-    async createTransferMoney(headers: object, body: object): Promise<object> {
+    async createTransferMoney(headers: HeaderInterface, body: BodyTransferMoneyInterface): Promise<object> {
         const endpoint = '/v2/finance';
         const errors = this.validateRequestInput(headers, body);
         if (errors.length > 0) {

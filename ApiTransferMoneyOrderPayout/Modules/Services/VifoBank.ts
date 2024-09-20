@@ -1,13 +1,14 @@
 import VifoSendRequest from "./VifoSendRequest";
 import VifoBankInterface from "../Interfaces/VifoBankInterface";
-
+import HeaderInterface from "../Interfaces/HeaderInterface";
+import BodyBeneficiaryName from "../Interfaces/BodyBeneficiaryName";
 class VifoBank implements VifoBankInterface {
     private sendRequest: VifoSendRequest;
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateBody(headers: object, body: object): string[] {
+    validateBody(headers: HeaderInterface, body: object): string[] {
         const errors = [];
 
         if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
@@ -20,7 +21,7 @@ class VifoBank implements VifoBankInterface {
         return errors;
     }
 
-    async getBank(headers: object, body: object): Promise<object> {
+    async getBank(headers: HeaderInterface, body: object): Promise<object> {
         const endpoint = '/v2/data/banks/napas';
         const errors = this.validateBody(headers, body);
         if (errors.length > 0) {
@@ -31,7 +32,7 @@ class VifoBank implements VifoBankInterface {
     }
 
 
-    async getBeneficiaryName(headers: object, body: object): Promise<object> {
+    async getBeneficiaryName(headers: HeaderInterface, body: BodyBeneficiaryName): Promise<object> {
         const endpoint = '/v2/finance/napas/receiver';
         const errors = this.validateBody(headers, body);
 

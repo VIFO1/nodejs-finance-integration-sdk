@@ -1,42 +1,34 @@
 import VifoSendRequest from './VifoSendRequest';
 import VifoAutheticateInterface from '../Interfaces/VifoAutheticateInterface';
-
+import BodyAutheticaterface from '../Interfaces/BodyAutheticaterface';
+import HeaderLoginInterface from '../Interfaces/HeaderLoginInterface';
 class VifoAutheticate implements VifoAutheticateInterface {
     private sendRequest: VifoSendRequest;
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateLoginInput(headers: object, username: string, password: string): string[] {
+    validateLoginInput(headers: HeaderLoginInterface, body: BodyAutheticaterface): string[] {
         const errors = [];
 
-        if (typeof username !== 'string' || username == '') {
-            errors.push('Invalid username');
-        }
-
-        if (typeof password !== 'string' || password == '') {
-            errors.push('Invalid password');
-        }
 
         if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
             errors.push('headers must be a non-empty object');
         }
 
+        if (body == null || typeof body !== 'object' || Array.isArray(body)) {
+            errors.push('headers must be a non-empty object');
+        }
         return errors;
     }
 
 
-    async authenticateUser(headers: object, username: string, password: string): Promise<object> {
-        const errorsLoginInput = this.validateLoginInput(headers, username, password);
+    async authenticateUser(headers: HeaderLoginInterface, body: BodyAutheticaterface): Promise<object> {
+        const errorsLoginInput = this.validateLoginInput(headers, body);
 
         if (errorsLoginInput.length > 0) {
             return { errorsLoginInput: errorsLoginInput };
         }
-
-        const body = {
-            username: username,
-            password: password
-        };
 
         const endpoint = '/v1/clients/web/admin/login';
 

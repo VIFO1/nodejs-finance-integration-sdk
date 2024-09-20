@@ -16,7 +16,7 @@ import VifoServiceFactory;
 
 2.Login
 const serviceFactory = new VifoServiceFactory('*');
-const authenticateUser = await serviceFactory. performUserAuthentication(username: string, password: string): Promise<object>l
+const authenticateUser = await serviceFactory. performUserAuthentication(body: BodyAutheticaterface): Promise<object>l
 
 2.1 Methods for Token Setup
 const accessTokenUser = service.setUserToken('your_user_token_here');
@@ -30,48 +30,56 @@ Once the tokens are set using the above methods, they will be automatically incl
 
 3.Prepare data
 3.1  Get List of available Banks:
-const banks = await serviceFactory.fetchBankInformation(body: object): Promise<object>;
+const banks = await serviceFactory.fetchBankInformation(body: BodyBankInfoInterface): Promise<object>;
 
 3.2 Get NAPAS Beneficiary Name:
-const beneficiaryName = await serviceFactory.fetchBeneficiaryName(body: object): Promise<object>;
+const beneficiaryName = await serviceFactory.fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object>;
 
 4.Create Transfer Money API:
-const transferMoney = await serviceFactory.executeMoneyTransfer(body: object): Promise<object>;
+const transferMoney = await serviceFactory.executeMoneyTransfer(body: BodyTransferMoneyInterface): Promise<object>;
 
 5.Bulk Approve Transfer Money API
-const approveMoneyTransfer = await serviceFactory.approveMoneyTransfer(secretKey: string, timestamp: string, body: object): Promise<object>;
+const approveMoneyTransfer = await serviceFactory.approveMoneyTransfer(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): Promise<object>;
 
 6.Webhook to inform the result of transfer / pay out request
-const webhook = await serviceFactory.verifyWebhookSignature(data: object, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean>;
+const webhook = await serviceFactory.verifyWebhookSignature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean>;
 
 7. Others request
 const otherRequest = await serviceFactory.processOtherRequest(key: string): Promise<object>;
 
 8.Create Reva Order
 const createRevaOrder = await serviceFactory.createRevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
+        bankDetail: boolean,
+        qrType: string,
+        endDate: string
  ): Promise<object>;
 -Description: This method creates a new Reva order.
 
 9.Create Seva Order
 const createSevaOrder = await serviceFactory.createSevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
+        bankDetail: boolean,
+        qrType: string,
+        endDate: string
 ): Promise<object>;
 -Description: This method creates a new Seva order.
 

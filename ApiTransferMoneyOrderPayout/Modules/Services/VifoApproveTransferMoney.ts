@@ -1,14 +1,15 @@
 import VifoSendRequest from './VifoSendRequest';
 import crypto from 'crypto';
 import VifoApproveTransferMoneyInterface from '../Interfaces/VifoApproveTransferMoneyInterface';
-
+import HeaderInterface from '../Interfaces/HeaderInterface';
+import BodyApproveTransferMoney from '../Interfaces/BodyApproveTransferMoney';
 class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
     private sendRequest: VifoSendRequest;
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateApproveTransfersInput(secretKey: string, timestamp: string, body: object): string[] {
+    validateApproveTransfersInput(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): string[] {
         const errors = [];
 
         if (secretKey == '' || typeof secretKey !== 'string') {
@@ -26,7 +27,7 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
         return errors;
     }
 
-    createSignature(secretKey: string, timestamp: string, body: object): string {
+    createSignature(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): string {
         const errors = this.validateApproveTransfersInput(secretKey, timestamp, body);
 
         if (errors.length > 0) {
@@ -52,7 +53,7 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
         return gen_hmac;
     }
 
-    async approveTransfers(secretKey: string, timestamp: string, headers: object, body: object): Promise<object> {
+    async approveTransfers(secretKey: string, timestamp: string, headers: HeaderInterface, body: BodyApproveTransferMoney): Promise<object> {
         const errors = this.validateApproveTransfersInput(secretKey, timestamp, body);
         if (errors.length > 0) {
             return { errors: errors };

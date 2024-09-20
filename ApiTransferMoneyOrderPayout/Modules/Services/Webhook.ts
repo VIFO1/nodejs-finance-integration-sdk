@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 import WebhookInterface from '../Interfaces/WebhookInterface';
-
+import BodyWebhookInterface from '../Interfaces/BodyWebhookInterface';
 class Webhook implements WebhookInterface{
-    validate(secretKey: string, timestamp: string, body: object): string[] {
+    validate(secretKey: string, timestamp: string, body: BodyWebhookInterface): string[] {
         const errors = [];
 
         if (secretKey == '' || typeof secretKey !== 'string') {
@@ -19,7 +19,7 @@ class Webhook implements WebhookInterface{
 
         return errors;
     }
-    createSignature(secretKey: string, timestamp: string, body: object): string {
+    createSignature(secretKey: string, timestamp: string, body: BodyWebhookInterface): string {
 
         const bodyArray = Object.entries(body);
 
@@ -41,7 +41,7 @@ class Webhook implements WebhookInterface{
         return gen_hmac;
     }
 
-    async handleSignnature(data: object, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
+    async handleSignnature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
         const errors = this.validate(secretKey, timestamp, data);
 
         if (errors.length > 0) {

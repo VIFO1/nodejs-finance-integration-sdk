@@ -1,5 +1,6 @@
 import VifoSendRequest from "./VifoSendRequest";
 import VifoOtherRequestInterface from "../Interfaces/VifoOtherRequestInterface";
+import HeaderInterface from "../Interfaces/HeaderInterface";
 
 class VifoOtherRequest implements VifoOtherRequestInterface {
     private sendRequest: VifoSendRequest;
@@ -8,21 +9,21 @@ class VifoOtherRequest implements VifoOtherRequestInterface {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateOrderKey(headers: object, key: string): string[] {
+    validateOrderKey(headers: HeaderInterface, key:string): string[] {
         const errors = [];
 
         if (typeof headers !== 'object') {
             errors.push('headers must be a non-empty object');
         }
 
-        if (key == '' || typeof key !== 'string') {
+        if (typeof key !== 'string') {
             errors.push('Order key must be a string');
         }
 
         return errors;
     }
 
-    async checkOrderStatus(headers: object, key: string): Promise<object> {
+    async checkOrderStatus(headers: HeaderInterface, key:string): Promise<object> {
         const errors = this.validateOrderKey(headers, key);
         if (errors.length > 0) {
             return { errors: errors };

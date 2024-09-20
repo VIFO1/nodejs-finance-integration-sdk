@@ -1,5 +1,7 @@
+import BodyAutheticaterface from '../Interfaces/BodyAutheticaterface';
+import HeaderLoginInterface from './HeaderLoginInterface';
 interface VifoAutheticateInterface {
-    validateLoginInput(headers: object, username: string, password: string): string[];
-    authenticateUser(headers: object, username: string, password: string): Promise<object>;
+    validateLoginInput(headers: HeaderLoginInterface, body: BodyAutheticaterface): string[];
+    authenticateUser(headers: HeaderLoginInterface, body: BodyAutheticaterface):Promise<object>;
 }
 export default VifoAutheticateInterface;
