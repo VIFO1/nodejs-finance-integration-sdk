@@ -49,7 +49,6 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
 
         const gen_hmac = hmac.digest('hex');
 
-        console.log(gen_hmac);
         
         return gen_hmac;
     }
