@@ -1,8 +1,9 @@
+import HeaderInterface from "../Interfaces/HeaderInterface";
+import BodyBeneficiaryName from "./BodyBeneficiaryName";
 interface VifoBankInterface {
-    validateBody(headers: object, body: object): string[];
-    getBank(headers: object, body: object): object;
-    getBeneficiaryName(headers: object, body: object): object;
+    validateBody(headers: HeaderInterface, body:object): string[];
+    getBank(headers: HeaderInterface, body: BodyBeneficiaryName): Promise<object>;
+    getBeneficiaryName(headers: HeaderInterface, body: BodyBeneficiaryName): Promise<object>;
 
 }
-
 export default VifoBankInterface;

@@ -1,5 +1,7 @@
 import axios from 'axios';
 import VifoSendRequestInterface from '../Interfaces/VifoSendRequestInterface';
+import ResponseDataInterface from '../Interfaces/ResponseDataInterface';
+
 class VifoSendRequest implements VifoSendRequestInterface {
     private baseUrl: string;
 
@@ -14,9 +16,10 @@ class VifoSendRequest implements VifoSendRequestInterface {
             throw new Error(`Invalid environment: ${env}`);
         }
     }
-    async sendRequest(method: string, endpoint: string, headers: object, body: object): Promise<object> {
-        const url = `${this.baseUrl}${endpoint}`;
 
+
+    async sendRequest(method: string, endpoint: string, headers: object, body: object): Promise<ResponseDataInterface> {
+        const url = `${this.baseUrl}${endpoint}`;
         try {
             const response = await axios({
                 method: method,
@@ -25,25 +28,28 @@ class VifoSendRequest implements VifoSendRequestInterface {
                 data: body
             });
             return {
+                errors: null,
                 status_code: response.status,
-                body: response.data,
+                body: response.data
             };
         } catch (error: unknown) {
-            let errorMessage = 'An unknown error occurred';
+            let errorMessages: string[] = [];
             let statusCode = 500;
             let responseBody = null;
+
             if (axios.isAxiosError(error)) {
-                errorMessage = `Request Exception: ${error.message}`;
+                errorMessages.push(`Request Exception: ${error.message}`);
                 statusCode = error.response ? error.response.status : 500;
                 responseBody = error.response ? error.response.data : null;
             }
-            return {
-                errors: errorMessage,
-                status_code: statusCode,
-                body: responseBody
-            };
 
+            return {
+                status_code: statusCode,
+                body: responseBody,
+                errors: errorMessages
+            };
         }
     }
+
 }
 export default VifoSendRequest;

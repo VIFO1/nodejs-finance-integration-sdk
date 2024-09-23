@@ -1,12 +1,14 @@
 import VifoSendRequest from './VifoSendRequest';
-
-class VifoTransferMoney {
-    private sendRequest : VifoSendRequest;
+import VifoTransferMoneyInterface from '../Interfaces/VifoTransferMoneyInterface';
+import HeaderInterface from '../Interfaces/HeaderInterface';
+import BodyTransferMoneyInterface from '../Interfaces/BodyTransferMoneyInterface';
+class VifoTransferMoney implements VifoTransferMoneyInterface {
+    private sendRequest: VifoSendRequest;
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
 
-    private validateRequestInput(headers:object, body:object) {
+    validateRequestInput(headers: HeaderInterface, body: BodyTransferMoneyInterface): string[] {
         const errors = [];
 
         if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
@@ -19,16 +21,14 @@ class VifoTransferMoney {
         return errors;
     }
 
-    async createTransferMoney(headers:object, body:object)
-    {
-       const endpoint = '/v2/finance';
-       const errors = this.validateRequestInput(headers,body);
-       if(errors.length > 0)
-       {
-        return {errors : errors};
-       }
-       
-       return await this.sendRequest.sendRequest("POST",endpoint,headers,body);
+    async createTransferMoney(headers: HeaderInterface, body: BodyTransferMoneyInterface): Promise<object> {
+        const endpoint = '/v2/finance';
+        const errors = this.validateRequestInput(headers, body);
+        if (errors.length > 0) {
+            return { errors: errors };
+        }
+
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
     }
 }
 

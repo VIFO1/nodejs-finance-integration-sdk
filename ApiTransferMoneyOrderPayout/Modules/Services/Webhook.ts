@@ -1,49 +1,26 @@
 import crypto from 'crypto';
-class Webhook {
-    validate(secretKey:string, timestamp:string, body:object) {
-        const errors = [];
+import WebhookInterface from '../Interfaces/WebhookInterface';
+import BodyWebhookInterface from '../Interfaces/BodyWebhookInterface';
+import generateSignature from '../CommonFunctions/generateSignature';
+import validateSignatureInputs from '../CommonFunctions/validateSignatureInputs';
 
-        if (secretKey == '' || typeof secretKey !== 'string') {
-            errors.push('Invalid secret key');
+class Webhook implements WebhookInterface {
+
+    createSignature(secretKey: string, timestamp: string, body: BodyWebhookInterface): string | string[] {
+        const errors = validateSignatureInputs(secretKey, timestamp, body);
+        if (errors.length > 0) {
+            return `Errors: ${errors}`;
         }
 
-        if (timestamp == '') {
-            errors.push('Invalid timestamp');
-        }
-
-        if (typeof body !== 'object') {
-            errors.push('The body must be a non-empty object');
-        }
-
-        return errors;
-    }
-    createSignature(secretKey:string, timestamp:string, body:object) {
-     
-        const bodyArray = Object.entries(body);
-
-        const sortBodyAlphabet = bodyArray.sort(([a], [b]) => a.localeCompare(b));
-
-        const bodyObject = Object.fromEntries(sortBodyAlphabet);
-
-        const payload = JSON.stringify(bodyObject);
-
-        const signatureString = timestamp + payload;
-
-        const hmac = crypto.createHmac('sha256', secretKey);
-
-        hmac.update(signatureString);
-
-        const gen_hmac = hmac.digest('hex');
-
-
-        return gen_hmac;
+        return generateSignature(secretKey, timestamp, body);
     }
 
-    async handleSignnature(data:object, requestSignature:string, secretKey:string, timestamp:string) {
-        const errors = this.validate(secretKey, timestamp, data);
+
+    async handleSignnature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
+        const errors = validateSignatureInputs(secretKey, timestamp, data);
 
         if (errors.length > 0) {
-            return { errors: errors };
+            throw new Error('Validation errors: ' + errors);
         }
 
         const generatedSignature = await this.createSignature(secretKey, timestamp, data);

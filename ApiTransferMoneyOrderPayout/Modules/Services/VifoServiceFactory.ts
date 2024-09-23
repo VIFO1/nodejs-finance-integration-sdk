@@ -5,21 +5,33 @@ import VifoTransferMoney from './VifoTransferMoney';
 import VifoApproveTransferMoney from './VifoApproveTransferMoney';
 import Webhook from './Webhook';
 import VifoOtherRequest from './VifoOtherRequest';
-import VifoCreateOrder from './VifoCreateOrder';
 import VifoServiceFactoryInterface from '../Interfaces/VifoServiceFactoryInterface';
-
-class VifoServiceFactory implements VifoServiceFactoryInterface{
+import HeaderInterface from '../Interfaces/HeaderInterface';
+import HeaderLoginInterface from '../Interfaces/HeaderLoginInterface';
+import BodyAutheticaterface from '../Interfaces/BodyAutheticaterface';
+import BodyBeneficiaryName from '../Interfaces/BodyBeneficiaryName';
+import BodyTransferMoneyInterface from '../Interfaces/BodyTransferMoneyInterface';
+import BodyApproveTransferMoney from '../Interfaces/BodyApproveTransferMoney';
+import BodyWebhookInterface from '../Interfaces/BodyWebhookInterface';
+import BodyCreateRevaOrderInterface from '../Interfaces/BodyCreateRevaOrderInterface';
+import BodyCreateSevaOrderInterface from '../Interfaces/BodyCreateSevaOrderInterface';
+import VifoCreateSevaOrder from './VifoCreateSevaOrder';
+import VifoCreateRevaOrder from './VifoCreateRevaOrder';
+import { QRTypeSeva } from '../Interfaces/BodyCreateSevaOrderInterface';
+import { QRTypeReva } from '../Interfaces/BodyCreateRevaOrderInterface';
+class VifoServiceFactory implements VifoServiceFactoryInterface {
     private sendRequest: VifoSendRequest;
     private webhook: Webhook;
-    private createOrder: VifoCreateOrder;
+    private orderSeva: VifoCreateSevaOrder;
+    private orderReva: VifoCreateRevaOrder;
     private otherRequest: VifoOtherRequest;
     private approveTransferMoney: VifoApproveTransferMoney;
     private transferMoney: VifoTransferMoney;
     private bank: VifoBank;
     private loginAuthenticateUser: VifoAuthenticate;
     private env: string;
-    private headers: object;
-    private headersLogin: object;
+    private headers: HeaderInterface;
+    private headersLogin: HeaderLoginInterface;
     private userToken: string | null;
     private adminToken: string | null;
 
@@ -32,12 +44,15 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         this.loginAuthenticateUser = new VifoAuthenticate();
         this.bank = new VifoBank();
         this.transferMoney = new VifoTransferMoney();
-        this.createOrder = new VifoCreateOrder;
         this.approveTransferMoney = new VifoApproveTransferMoney();
-
+        this.orderSeva = new VifoCreateSevaOrder();
+        this.orderReva = new VifoCreateRevaOrder();
         this.headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Authorization': null,
+            'x-request-timestamp': null,
+            'x-request-signature': null,
         };
         this.headersLogin = {
             'Accept': 'application/json',
@@ -55,44 +70,44 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         this.adminToken = token;
     }
 
-    getAuthorizationHeaders(type: string): { [key: string]: string } {
+    getAuthorizationHeaders(type: string): HeaderInterface {
         const token = type == 'user' ? this.userToken : this.adminToken;
 
         return {
             ...this.headers,
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'x-request-timestamp': null,
+            'x-request-signature': null,
         };
     }
 
-    async performUserAuthentication(username: string, password: string): Promise<object> {
-        const response = await this.loginAuthenticateUser.authenticateUser(this.headersLogin, username, password);
+    async performUserAuthentication(body: BodyAutheticaterface): Promise<object> {
+        const response = await this.loginAuthenticateUser.authenticateUser(this.headersLogin, body);
 
-        if ('status_code' in response) {
+        if ('body' in response) {
             return {
-                status: 'errors',
-                message: 'Authentication failed',
-                status_code: 'status_code' in response ? response.status_code : ''
+                status_code: 'status_code' in response ? response.status_code : '',
+                body: response.body
             };
         }
 
         return response;
     }
 
-    async fetchBankInformation(body: object): Promise<string> {
+    async fetchBankInformation(body: object): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
         const response = await this.bank.getBank(headers, body);
 
-        if ('status_code' in response) {
-            return JSON.stringify({
-                status: 'errors',
+        if ('success' in response) {
+            return {
                 body: 'body' in response ? response.body : '',
                 status_code: 'status_code' in response ? response.status_code : ''
-            }, null, 2);
+            };
         }
-        return JSON.stringify(response, null, 2);
+        return response;
     }
 
-    async fetchBeneficiaryName(body: object): Promise<object> {
+    async fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
 
         if (!('bank_code' in body) || !('account_number' in body)) {
@@ -107,28 +122,26 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         return response;
     }
 
-    async executeMoneyTransfer(body: object): Promise<object> {
+    async executeMoneyTransfer(body: BodyTransferMoneyInterface): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
 
         const response = await this.transferMoney.createTransferMoney(headers, body);
 
-        if ('status_code' in response) {
+        if ('success' in response) {
             return {
-                status: 'errors',
                 message: 'body' in response ? response.body : ''
             };
         }
         return response;
     }
 
-    async approveMoneyTransfer(secretKey: string, timestamp: string, body: object): Promise<object> {
-        const headers = this.getAuthorizationHeaders('admin');
+    async approveMoneyTransfer(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): Promise<object> {
+        const headers: HeaderInterface = this.getAuthorizationHeaders('admin');
+        const requestSignature = this.approveTransferMoney.createSignature(secretKey, timestamp, body);
 
-        const requestSignature =  this.approveTransferMoney.createSignature(secretKey, timestamp, body);
+        headers['x-request-timestamp'] = timestamp;
+        headers['x-request-signature'] = requestSignature;
 
-        headers['x-request-timestamp'] = `${timestamp}`;
-        headers['x-request-signature'] = `${requestSignature}`;
-        
         const response = await this.approveTransferMoney.approveTransfers(secretKey, timestamp, headers, body);
 
         if ('errors' in response) {
@@ -139,7 +152,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         }
         return response;
     }
-    async verifyWebhookSignature(data: object, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
+    async verifyWebhookSignature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean> {
         const result = await this.webhook.handleSignnature(data, requestSignature, secretKey, timestamp);
 
         if (result !== true) {
@@ -147,7 +160,6 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
         }
         return true;
     }
-
     async processOtherRequest(key: string): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
 
@@ -163,63 +175,93 @@ class VifoServiceFactory implements VifoServiceFactoryInterface{
 
     }
 
+
     async createRevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
+        bankDetail: boolean,
+        qrType: QRTypeReva | null,
+        endDate: string | null
     ): Promise<object> {
-        const headers = this.getAuthorizationHeaders('admin');
-        const body = {
-            'product_code': productCode,
-            'phone': phone,
-            'fullname': fullname,
-            'final_amount': finalAmount,
-            'distributor_order_number': distributorOrderNumber,
-            'benefiary_bank_code': beneficiaryBankCode,
-            'benefiary account no': beneficiaryAccountNo,
-            'comment': comment,
-            'source_account_no': sourceAccountNo,
-        }
-        const response = await this.createOrder.createOrder(headers, body);
+        const body: BodyCreateRevaOrderInterface = {
+            fullname: fullname,
+            benefiary_bank_code: benefiaryBankCode,
+            benefiary_account_no: benefiaryAccountNo,
+            product_code: productCode,
+            distributor_order_number: distributorOrderNumber,
+            phone: phone,
+            email: email,
+            address: address,
+            final_amount: finalAmount,
+            comment: comment,
+            bank_detail: bankDetail,
+            qr_type: qrType,
+            end_date: endDate,
+        };
 
-        if ('errors' in response) {
+        const headers = this.getAuthorizationHeaders('user');
+
+        const response = await this.orderReva.createRevaOrder(headers, body);
+        if ('status_code' in response) {
             return {
-                status: 'errors',
-                'message': response.errors,
-                status_code: 'status_code' in response ? response.status_code : ''
+                status_code: response.status_code,
+                body: 'body' in response ? response.body : ''
             };
         }
         return response;
     }
 
-    async createNevaOrder(
+    async createSevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
+        bankDetail: boolean,
+        qrType: QRTypeSeva | null,
+        endDate: string | null
     ): Promise<object> {
-        return this.createRevaOrder(
-            productCode,
-            distributorOrderNumber,
-            phone,
-            fullname,
-            finalAmount,
-            beneficiaryAccountNo,
-            beneficiaryBankCode,
-            comment,
-            sourceAccountNo
-        );
+        const body: BodyCreateSevaOrderInterface = {
+            fullname: fullname,
+            benefiary_bank_code: benefiaryBankCode,
+            benefiary_account_no: benefiaryAccountNo,
+            product_code: productCode,
+            distributor_order_number: distributorOrderNumber,
+            phone: phone,
+            email: email,
+            address: address,
+            final_amount: finalAmount,
+            comment: comment,
+            bank_detail: bankDetail,
+            qr_type: qrType,
+            end_date: endDate,
+        };
+
+        const headers = this.getAuthorizationHeaders('user');
+
+        const response = await this.orderSeva.createSevaOrder(headers, body);
+        if ('status_code' in response) {
+            return {
+                status_code: response.status_code,
+                body: 'body' in response ? response.body : ''
+            };
+        }
+        return response;
     }
+
+
 }
 export default VifoServiceFactory;

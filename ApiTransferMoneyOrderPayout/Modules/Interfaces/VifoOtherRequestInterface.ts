@@ -1,5 +1,6 @@
-interface VifoOtherRequestInterface{
-    validateOrderKey(headers: object, key: string): string[];
-    checkOrderStatus(headers: object, key: string): Promise<object>;
+import HeaderInterface from "./HeaderInterface";
+interface VifoOtherRequestInterface {
+    validateOrderKey(headers: HeaderInterface, key:string): string[];
+    checkOrderStatus(headers: HeaderInterface, key:string): Promise<object>;
 }
 export default VifoOtherRequestInterface;

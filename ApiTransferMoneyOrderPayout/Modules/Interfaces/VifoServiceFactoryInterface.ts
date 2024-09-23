@@ -1,47 +1,63 @@
+import BodyAutheticaterface from "./BodyAutheticaterface";
+import HeaderInterface from "./HeaderInterface";
+import BodyBeneficiaryName from "./BodyBeneficiaryName";
+import BodyApproveTransferMoney from "./BodyApproveTransferMoney";
+import BodyTransferMoneyInterface from "./BodyTransferMoneyInterface";
+import BodyWebhookInterface from "./BodyWebhookInterface";
+import { QRTypeSeva } from '../Interfaces/BodyCreateSevaOrderInterface';
+import { QRTypeReva } from '../Interfaces/BodyCreateRevaOrderInterface';
 interface VifoServiceFactoryInterface {
     setTokenUser(token: string): void;
 
     setTokenAdmin(token: string): void;
 
-    getAuthorizationHeaders(type: string): { [key: string]: string };
+    getAuthorizationHeaders(type: string): HeaderInterface;
 
-    performUserAuthentication(username: string, password: string): Promise<object>;
+    performUserAuthentication(body: BodyAutheticaterface): Promise<object>;
 
-    fetchBankInformation(body: object): Promise<string>;
+    fetchBankInformation(body: object): Promise<object>;
 
-    fetchBeneficiaryName(body: object): Promise<object>;
+    fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object>;
 
-    executeMoneyTransfer(body: object): Promise<object>;
+    executeMoneyTransfer(body: BodyTransferMoneyInterface): Promise<object>;
 
-    approveMoneyTransfer(secretKey: string, timestamp: string, body: object): Promise<object>;
+    approveMoneyTransfer(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): Promise<object>;
 
-    verifyWebhookSignature(data: object, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean>;
+    verifyWebhookSignature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean>;
 
     processOtherRequest(key: string): Promise<object>;
 
     createRevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
+        bankDetail: boolean,
+        qrType: QRTypeReva | null,
+        endDate: string | null
     ): Promise<object>;
 
-    createNevaOrder(
+    createSevaOrder(
+        fullname: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        fullname: string,
+        email: string,
+        address: string,
         finalAmount: number,
-        beneficiaryAccountNo: string,
-        beneficiaryBankCode: string,
         comment: string,
-        sourceAccountNo: string
-    ): Promise<object>
+        bankDetail: boolean,
+        qrType: QRTypeSeva | null,
+        endDate: string | null
+    ): Promise<object>;
 
 }
 

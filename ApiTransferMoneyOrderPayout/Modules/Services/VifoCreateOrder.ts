@@ -1,6 +1,7 @@
 import VifoSendRequest from "./VifoSendRequest";
 import VifoCreateOrderInterface from "../Interfaces/VifoCreateOrderInterface";
-
+import HeaderInterface from "../Interfaces/HeaderInterface";
+import BodyCreateOrderInterface from "../Interfaces/BodyCreateOrderInterface";
 class VifoCreateOrder implements VifoCreateOrderInterface {
     private sendRequest: VifoSendRequest;
 
@@ -8,7 +9,7 @@ class VifoCreateOrder implements VifoCreateOrderInterface {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateRequestInput(headers: object, body: object): string[] {
+    validateRequestInput(headers: HeaderInterface, body: object): string[] {
         const errors = [];
 
         if (typeof headers !== 'object') {
@@ -24,7 +25,7 @@ class VifoCreateOrder implements VifoCreateOrderInterface {
             'fullname',
             'final_amount',
             'distributor_order_number',
-            'benefiary account no',
+            'benefiary_account_no',
             'benefiary_bank_code',
             'comment',
         ];
@@ -38,14 +39,14 @@ class VifoCreateOrder implements VifoCreateOrderInterface {
         return errors;
     }
 
-    async createOrder(headers: object, body: object): Promise<object> {
+    async createOrder(headers: HeaderInterface, body: BodyCreateOrderInterface): Promise<object> {
         const errors = this.validateRequestInput(headers, body);
         if (errors.length > 0) {
             return { errors: errors };
         }
         const endpoint = '/v2/finance';
 
-        return await this.sendRequest.sendRequest("POST", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
     }
 }
 
