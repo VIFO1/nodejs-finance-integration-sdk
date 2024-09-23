@@ -1,8 +1,7 @@
 # finance-integration-sdk
-PHP SDK finance of VIFO
-# PHP File Usage Guide
+Node.js SDK for VIFO Finance
+# Nodejs File Usage Guide
 ## Purpose
-
 This Nodejs file uses services from `VifoServiceFactory` to perform banking, money transfer and other requests. The following guide provides detailed information on how to use and understand the functions of the code.
 
 ## Requirements
@@ -10,13 +9,14 @@ This Nodejs file uses services from `VifoServiceFactory` to perform banking, mon
 - **npm**: Installed (comes with Node.js) for managing JavaScript packages.
 
 ## Code Structure
-### 1. Import Classes and Requirements Automatically
+### 1. Import Classes and Requirements
 ```javascript
 import VifoServiceFactory;
 
-2.Login
-const serviceFactory = new VifoServiceFactory('*');
-const authenticateUser = await serviceFactory. performUserAuthentication(body: BodyAutheticaterface): Promise<object>l
+2.User Authentication
+const environment = 'stg';
+const serviceFactory = new VifoServiceFactory(environment);
+const authenticateUser = await serviceFactory.performUserAuthentication(body: BodyAutheticaterface): Promise<object>;
 
 2.1 Methods for Token Setup
 const accessTokenUser = service.setUserToken('your_user_token_here');
