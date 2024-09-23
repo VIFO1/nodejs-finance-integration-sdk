@@ -1,6 +1,6 @@
 interface BodyApproveTransferMoney
 {
-    status: string,
+    status: number,
     ids: string[]
 }
 export default BodyApproveTransferMoney;

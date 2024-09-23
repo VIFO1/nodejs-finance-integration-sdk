@@ -1,8 +1,15 @@
 import VifoOtherRequest from "../Modules/Services/VifoOtherRequest";
-let otherRequest = new VifoOtherRequest();
-
+import HeaderInterface from "../Modules/Interfaces/HeaderInterface";
 async function testOtherRequest() {
-    const result = await otherRequest.validateOrderKey({}, 'test123');
+    const otherRequest = new VifoOtherRequest();
+    const headers: HeaderInterface = {
+        Accept: '',
+        'Content-Type': '',
+        Authorization: '',
+        'x-request-timestamp': '',
+        'x-request-signature': '',
+    };
+    const result = await otherRequest.validateOrderKey(headers, 'test123');
     console.log(result);
 
 }

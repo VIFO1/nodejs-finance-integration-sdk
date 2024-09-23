@@ -1,6 +1,5 @@
 import BodyAutheticaterface from "./BodyAutheticaterface";
 import HeaderInterface from "./HeaderInterface";
-import BodyBankInfoInterface from "./BodyBankInfoInterface";
 import BodyBeneficiaryName from "./BodyBeneficiaryName";
 import BodyApproveTransferMoney from "./BodyApproveTransferMoney";
 import BodyTransferMoneyInterface from "./BodyTransferMoneyInterface";
@@ -15,7 +14,7 @@ interface VifoServiceFactoryInterface {
 
     performUserAuthentication(body : BodyAutheticaterface): Promise<object>;
 
-    fetchBankInformation(body: BodyBankInfoInterface): Promise<object>;
+    fetchBankInformation(body:object): Promise<object>;
 
     fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object>;
 
@@ -34,13 +33,13 @@ interface VifoServiceFactoryInterface {
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string,
-        address: string,
+        email: string | null,
+        address: string | null,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
     ): Promise<object>;
 
     createSevaOrder(
@@ -50,13 +49,13 @@ interface VifoServiceFactoryInterface {
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string,
-        address: string,
+        email: string | null,
+        address: string | null,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
     ): Promise<object>
 
 }

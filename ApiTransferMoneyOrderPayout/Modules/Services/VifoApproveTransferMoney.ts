@@ -49,7 +49,8 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
 
         const gen_hmac = hmac.digest('hex');
 
-
+        console.log(gen_hmac);
+        
         return gen_hmac;
     }
 
@@ -61,7 +62,7 @@ class VifoApproveTransferMoney implements VifoApproveTransferMoneyInterface {
 
         const endpoint = '/v2/finance/confirm';
 
-        return await this.sendRequest.sendRequest("POST", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
     }
 }
 

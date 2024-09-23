@@ -46,7 +46,7 @@ class VifoCreateOrder implements VifoCreateOrderInterface {
         }
         const endpoint = '/v2/finance';
 
-        return await this.sendRequest.sendRequest("POST", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
     }
 }
 

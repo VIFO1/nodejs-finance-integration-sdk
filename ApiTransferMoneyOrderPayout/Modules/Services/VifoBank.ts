@@ -28,7 +28,7 @@ class VifoBank implements VifoBankInterface {
             return { errors: errors };
         }
 
-        return await this.sendRequest.sendRequest("GET", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('GET', endpoint, headers, body);
     }
 
 
@@ -39,7 +39,7 @@ class VifoBank implements VifoBankInterface {
         if (errors.length > 0) {
             return { errors: errors };
         }
-        return await this.sendRequest.sendRequest("POST", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
 
     }
 }

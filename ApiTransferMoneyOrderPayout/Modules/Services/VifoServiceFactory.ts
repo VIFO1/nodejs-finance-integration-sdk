@@ -10,7 +10,6 @@ import VifoServiceFactoryInterface from '../Interfaces/VifoServiceFactoryInterfa
 import HeaderInterface from '../Interfaces/HeaderInterface';
 import HeaderLoginInterface from '../Interfaces/HeaderLoginInterface';
 import BodyAutheticaterface from '../Interfaces/BodyAutheticaterface';
-import BodyBankInfoInterface from '../Interfaces/BodyBankInfoInterface';
 import BodyBeneficiaryName from '../Interfaces/BodyBeneficiaryName';
 import BodyCreateOrderInterface from '../Interfaces/BodyCreateOrderInterface';
 import BodyTransferMoneyInterface from '../Interfaces/BodyTransferMoneyInterface';
@@ -91,7 +90,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         return response;
     }
 
-    async fetchBankInformation(body: BodyBankInfoInterface): Promise<object> {
+    async fetchBankInformation(body: object): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
         const response = await this.bank.getBank(headers, body);
 
@@ -186,25 +185,29 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
     ): Promise<object> {
         
         const body: BodyCreateOrderInterface = {
-            'fullname': fullame,
-            'benefiary_bank_code': benefiaryBankCode,
+            fullname: fullame,
+            benefiary_bank_code: benefiaryBankCode,
             'benefiary account no': benefiaryAccountNo,
-            'product_code':productCode,
-            'distributor_order_number': distributorOrderNumber,
-            'phone': phone,
-            'email': email,
-            'address': address,
-            'final_amount': finalAmount,
-            'comment': comment,
-            'bank_detail': bankDetail,
-            'qr_type ': qrType,
-            'end_date ': endDate,
+            product_code:productCode,
+            distributor_order_number: distributorOrderNumber,
+            phone: phone,
+            email: email,
+            address: address,
+            final_amount: finalAmount,
+            comment: comment,
+            bank_detail: bankDetail,
+            qr_type : qrType,
+            end_date : endDate,
         }
-        const headers = this.getAuthorizationHeaders('admin');
+        const headers = this.getAuthorizationHeaders('user');
+        console.log(headers); console.log(body);
+        
+        
+        
         const response = await this.createOrder.createOrder(headers, body);
         if ('status_code' in response) {
             return {
@@ -228,7 +231,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
     ): Promise<object> {
         return await this.createRevaOrder(
             fullname,

@@ -29,7 +29,7 @@ class VifoOtherRequest implements VifoOtherRequestInterface {
             return { errors: errors };
         }
         const endpoint = `/v2/finance/${key}/status`;
-        return await this.sendRequest.sendRequest("GET", endpoint, headers, {});
+        return await this.sendRequest.sendRequest('GET', endpoint, headers, {});
     }
 }
 

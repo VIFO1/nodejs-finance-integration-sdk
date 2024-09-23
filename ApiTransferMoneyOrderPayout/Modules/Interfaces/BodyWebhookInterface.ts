@@ -1,6 +1,6 @@
 interface BodyWebhookInterface
 {
-    status: string,
+    status: number,
     ids: string[]
 }
 export default BodyWebhookInterface;

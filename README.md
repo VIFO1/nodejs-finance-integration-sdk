@@ -30,7 +30,7 @@ Once the tokens are set using the above methods, they will be automatically incl
 
 3.Prepare data
 3.1  Get List of available Banks:
-const banks = await serviceFactory.fetchBankInformation(body: BodyBankInfoInterface): Promise<object>;
+const banks = await serviceFactory.fetchBankInformation(body:object): Promise<object>;
 
 3.2 Get NAPAS Beneficiary Name:
 const beneficiaryName = await serviceFactory.fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object>;
@@ -50,36 +50,36 @@ const otherRequest = await serviceFactory.processOtherRequest(key: string): Prom
 8.Create Reva Order
 const createRevaOrder = await serviceFactory.createRevaOrder(
         fullname: string,
-        benefiaryBankCode: string,
-        benefiaryAccountNo: string,
+        benefiary_bank_code: string,
+        benefiary_account_no: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string,
-        address: string,
+        email: string | null,
+        address: string | null,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
  ): Promise<object>;
 -Description: This method creates a new Reva order.
 
 9.Create Seva Order
 const createSevaOrder = await serviceFactory.createSevaOrder(
         fullname: string,
-        benefiaryBankCode: string,
-        benefiaryAccountNo: string,
+        benefiary_bank_code: string,
+        benefiary_account_no: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string,
-        address: string,
+        email: string | null,
+        address: string | null,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
         qrType: string,
-        endDate: string
+        endDate: string | null
 ): Promise<object>;
 -Description: This method creates a new Seva order.
 

@@ -28,7 +28,7 @@ class VifoTransferMoney implements VifoTransferMoneyInterface {
             return { errors: errors };
         }
 
-        return await this.sendRequest.sendRequest("POST", endpoint, headers, body);
+        return await this.sendRequest.sendRequest('POST', endpoint, headers, body);
     }
 }
 
