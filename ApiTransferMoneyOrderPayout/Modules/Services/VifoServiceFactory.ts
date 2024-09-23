@@ -5,21 +5,24 @@ import VifoTransferMoney from './VifoTransferMoney';
 import VifoApproveTransferMoney from './VifoApproveTransferMoney';
 import Webhook from './Webhook';
 import VifoOtherRequest from './VifoOtherRequest';
-import VifoCreateOrder from './VifoCreateOrder';
 import VifoServiceFactoryInterface from '../Interfaces/VifoServiceFactoryInterface';
 import HeaderInterface from '../Interfaces/HeaderInterface';
 import HeaderLoginInterface from '../Interfaces/HeaderLoginInterface';
 import BodyAutheticaterface from '../Interfaces/BodyAutheticaterface';
 import BodyBeneficiaryName from '../Interfaces/BodyBeneficiaryName';
-import BodyCreateOrderInterface from '../Interfaces/BodyCreateOrderInterface';
 import BodyTransferMoneyInterface from '../Interfaces/BodyTransferMoneyInterface';
 import BodyApproveTransferMoney from '../Interfaces/BodyApproveTransferMoney';
 import BodyWebhookInterface from '../Interfaces/BodyWebhookInterface';
+import BodyCreateRevaOrderInterface from '../Interfaces/BodyCreateRevaOrderInterface';
+import BodyCreateSevaOrderInterface from '../Interfaces/BodyCreateSevaOrderInterface';
+import VifoCreateSevaOrder from './VifoCreateSevaOrder';
+import VifoCreateRevaOrder from './VifoCreateRevaOrder';
 
 class VifoServiceFactory implements VifoServiceFactoryInterface {
     private sendRequest: VifoSendRequest;
     private webhook: Webhook;
-    private createOrder: VifoCreateOrder;
+    private orderSeva: VifoCreateSevaOrder;
+    private orderReva: VifoCreateRevaOrder;
     private otherRequest: VifoOtherRequest;
     private approveTransferMoney: VifoApproveTransferMoney;
     private transferMoney: VifoTransferMoney;
@@ -40,15 +43,15 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         this.loginAuthenticateUser = new VifoAuthenticate();
         this.bank = new VifoBank();
         this.transferMoney = new VifoTransferMoney();
-        this.createOrder = new VifoCreateOrder;
         this.approveTransferMoney = new VifoApproveTransferMoney();
-
+        this.orderSeva = new VifoCreateSevaOrder();
+        this.orderReva = new VifoCreateRevaOrder();
         this.headers = {
-           'Accept': 'application/json',
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': null, 
-            'x-request-timestamp': null, 
-            'x-request-signature': null, 
+            'Authorization': null,
+            'x-request-timestamp': null,
+            'x-request-signature': null,
         };
         this.headersLogin = {
             'Accept': 'application/json',
@@ -66,18 +69,18 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         this.adminToken = token;
     }
 
-    getAuthorizationHeaders(type: string): HeaderInterface  {
+    getAuthorizationHeaders(type: string): HeaderInterface {
         const token = type == 'user' ? this.userToken : this.adminToken;
 
         return {
             ...this.headers,
             'Authorization': `Bearer ${token}`,
-            'x-request-timestamp': null, 
-            'x-request-signature': null, 
+            'x-request-timestamp': null,
+            'x-request-signature': null,
         };
     }
 
-    async performUserAuthentication(body:BodyAutheticaterface): Promise<object> {
+    async performUserAuthentication(body: BodyAutheticaterface): Promise<object> {
         const response = await this.loginAuthenticateUser.authenticateUser(this.headersLogin, body);
 
         if ('body' in response) {
@@ -132,13 +135,12 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
     }
 
     async approveMoneyTransfer(secretKey: string, timestamp: string, body: BodyApproveTransferMoney): Promise<object> {
-        const headers = this.getAuthorizationHeaders('admin');
-
+        const headers: HeaderInterface = this.getAuthorizationHeaders('admin');
         const requestSignature = this.approveTransferMoney.createSignature(secretKey, timestamp, body);
 
-        headers['x-request-timestamp'] = `${timestamp}`;
-        headers['x-request-signature'] = `${requestSignature}`;
-        
+        headers['x-request-timestamp'] = timestamp;
+        headers['x-request-signature'] = requestSignature;
+
         const response = await this.approveTransferMoney.approveTransfers(secretKey, timestamp, headers, body);
 
         if ('errors' in response) {
@@ -157,7 +159,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         }
         return true;
     }
-    async processOtherRequest(key:string): Promise<object> {
+    async processOtherRequest(key: string): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
 
         const response = await this.otherRequest.checkOrderStatus(headers, key);
@@ -172,8 +174,9 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
 
     }
 
+
     async createRevaOrder(
-        fullame: string,
+        fullname: string,
         benefiaryBankCode: string,
         benefiaryAccountNo: string,
         productCode: string,
@@ -187,12 +190,11 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         qrType: string,
         endDate: string | null
     ): Promise<object> {
-        
-        const body: BodyCreateOrderInterface = {
-            fullname: fullame,
+        const body: BodyCreateRevaOrderInterface = {
+            fullname: fullname,
             benefiary_bank_code: benefiaryBankCode,
-            'benefiary account no': benefiaryAccountNo,
-            product_code:productCode,
+            benefiary_account_no: benefiaryAccountNo,
+            product_code: productCode,
             distributor_order_number: distributorOrderNumber,
             phone: phone,
             email: email,
@@ -200,15 +202,13 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
             final_amount: finalAmount,
             comment: comment,
             bank_detail: bankDetail,
-            qr_type : qrType,
-            end_date : endDate,
-        }
+            qr_type: qrType,
+            end_date: endDate,
+        };
+
         const headers = this.getAuthorizationHeaders('user');
-        console.log(headers); console.log(body);
-        
-        
-        
-        const response = await this.createOrder.createOrder(headers, body);
+
+        const response = await this.orderReva.createRevaOrder(headers, body);
         if ('status_code' in response) {
             return {
                 status_code: response.status_code,
@@ -233,21 +233,34 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         qrType: string,
         endDate: string | null
     ): Promise<object> {
-        return await this.createRevaOrder(
-            fullname,
-            benefiaryBankCode,
-            benefiaryAccountNo,
-            productCode,
-            distributorOrderNumber,
-            phone,
-            email,
-            address,
-            finalAmount,
-            comment,
-            bankDetail,
-            qrType,
-            endDate,
-        );
+        const body: BodyCreateSevaOrderInterface = {
+            fullname: fullname,
+            benefiary_bank_code: benefiaryBankCode,
+            benefiary_account_no: benefiaryAccountNo,
+            product_code: productCode,
+            distributor_order_number: distributorOrderNumber,
+            phone: phone,
+            email: email,
+            address: address,
+            final_amount: finalAmount,
+            comment: comment,
+            bank_detail: bankDetail,
+            qr_type: qrType,
+            end_date: endDate,
+        };
+
+        const headers = this.getAuthorizationHeaders('user');
+
+        const response = await this.orderSeva.createSevaOrder(headers, body);
+        if ('status_code' in response) {
+            return {
+                status_code: response.status_code,
+                body: 'body' in response ? response.body : ''
+            };
+        }
+        return response;
     }
+
+
 }
 export default VifoServiceFactory;

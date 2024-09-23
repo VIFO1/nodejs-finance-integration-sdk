@@ -4,17 +4,18 @@ import BodyBeneficiaryName from "./BodyBeneficiaryName";
 import BodyApproveTransferMoney from "./BodyApproveTransferMoney";
 import BodyTransferMoneyInterface from "./BodyTransferMoneyInterface";
 import BodyWebhookInterface from "./BodyWebhookInterface";
-
+import BodyCreateRevaOrderInterface from "./BodyCreateRevaOrderInterface";
+import BodyCreateSevaOrderInterface from "./BodyCreateSevaOrderInterface";
 interface VifoServiceFactoryInterface {
     setTokenUser(token: string): void;
 
     setTokenAdmin(token: string): void;
 
-    getAuthorizationHeaders(type: string): HeaderInterface ;
+    getAuthorizationHeaders(type: string): HeaderInterface;
 
-    performUserAuthentication(body : BodyAutheticaterface): Promise<object>;
+    performUserAuthentication(body: BodyAutheticaterface): Promise<object>;
 
-    fetchBankInformation(body:object): Promise<object>;
+    fetchBankInformation(body: object): Promise<object>;
 
     fetchBeneficiaryName(body: BodyBeneficiaryName): Promise<object>;
 
@@ -24,17 +25,17 @@ interface VifoServiceFactoryInterface {
 
     verifyWebhookSignature(data: BodyWebhookInterface, requestSignature: string, secretKey: string, timestamp: string): Promise<boolean>;
 
-    processOtherRequest(key:string): Promise<object>;
+    processOtherRequest(key: string): Promise<object>;
 
     createRevaOrder(
         fullname: string,
-        benefiary_bank_code: string,
-        benefiary_account_no: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string | null,
-        address: string | null,
+        email: string,
+        address: string,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
@@ -44,19 +45,19 @@ interface VifoServiceFactoryInterface {
 
     createSevaOrder(
         fullname: string,
-        benefiary_bank_code: string,
-        benefiary_account_no: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         productCode: string,
         distributorOrderNumber: string,
         phone: string,
-        email: string | null,
-        address: string | null,
+        email: string,
+        address: string,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
         qrType: string,
         endDate: string | null
-    ): Promise<object>
+    ): Promise<object>;
 
 }
 
