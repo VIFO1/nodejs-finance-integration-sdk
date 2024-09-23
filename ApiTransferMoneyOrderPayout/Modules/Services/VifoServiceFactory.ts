@@ -17,7 +17,8 @@ import BodyCreateRevaOrderInterface from '../Interfaces/BodyCreateRevaOrderInter
 import BodyCreateSevaOrderInterface from '../Interfaces/BodyCreateSevaOrderInterface';
 import VifoCreateSevaOrder from './VifoCreateSevaOrder';
 import VifoCreateRevaOrder from './VifoCreateRevaOrder';
-
+import { QRTypeSeva } from '../Interfaces/BodyCreateSevaOrderInterface';
+import { QRTypeReva } from '../Interfaces/BodyCreateRevaOrderInterface';
 class VifoServiceFactory implements VifoServiceFactoryInterface {
     private sendRequest: VifoSendRequest;
     private webhook: Webhook;
@@ -187,7 +188,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
-        qrType: string,
+        qrType: QRTypeReva | null,
         endDate: string | null
     ): Promise<object> {
         const body: BodyCreateRevaOrderInterface = {
@@ -230,7 +231,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
-        qrType: string,
+        qrType: QRTypeSeva | null,
         endDate: string | null
     ): Promise<object> {
         const body: BodyCreateSevaOrderInterface = {
