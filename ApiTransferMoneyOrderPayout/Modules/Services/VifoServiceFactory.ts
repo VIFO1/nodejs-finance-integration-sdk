@@ -162,7 +162,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
     }
     async processOtherRequest(key: string): Promise<object> {
         const headers = this.getAuthorizationHeaders('user');
-
+     
         const response = await this.otherRequest.checkOrderStatus(headers, key);
         if ('errors' in response) {
             return {
@@ -180,7 +180,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         fullname: string,
         benefiaryBankCode: string,
         benefiaryAccountNo: string,
-        productCode: string,
+        productCode: string | null,
         distributorOrderNumber: string,
         phone: string,
         email: string,
@@ -191,11 +191,12 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         qrType: QRTypeReva | null,
         endDate: string | null
     ): Promise<object> {
+        const actualProductCodeReva = productCode || 'REVAVF240101';
         const body: BodyCreateRevaOrderInterface = {
             fullname: fullname,
             benefiary_bank_code: benefiaryBankCode,
             benefiary_account_no: benefiaryAccountNo,
-            product_code: productCode,
+            product_code: actualProductCodeReva,
             distributor_order_number: distributorOrderNumber,
             phone: phone,
             email: email,
@@ -223,7 +224,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         fullname: string,
         benefiaryBankCode: string,
         benefiaryAccountNo: string,
-        productCode: string,
+        productCode: string | null,
         distributorOrderNumber: string,
         phone: string,
         email: string,
@@ -234,11 +235,12 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         qrType: QRTypeSeva | null,
         endDate: string | null
     ): Promise<object> {
+        const actualProductCodeSeva = productCode || 'SEVAVF240101';
         const body: BodyCreateSevaOrderInterface = {
             fullname: fullname,
             benefiary_bank_code: benefiaryBankCode,
             benefiary_account_no: benefiaryAccountNo,
-            product_code: productCode,
+            product_code: actualProductCodeSeva,
             distributor_order_number: distributorOrderNumber,
             phone: phone,
             email: email,
