@@ -16,8 +16,8 @@ class VifoOtherRequest implements VifoOtherRequestInterface {
             errors.push('headers must be a non-empty object');
         }
 
-        if (typeof key !== 'string') {
-            errors.push('Order key must be a string');
+        if (typeof key !== 'string' || key == '') {
+            errors.push('Order key must be a string and cannot be empty');
         }
 
         return errors;
