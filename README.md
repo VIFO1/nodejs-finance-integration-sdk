@@ -50,36 +50,31 @@ const otherRequest = await serviceFactory.processOtherRequest(key: string): Prom
 8.Create Reva Order
 const createRevaOrder = await serviceFactory.createRevaOrder(
         fullname: string,
-        benefiary_bank_code: string,
-        benefiary_account_no: string,
-        productCode: string,
+        benefiaryAccountName:string,
+        productCode: string | null,
         distributorOrderNumber: string,
         phone: string,
-        email: string | null,
-        address: string | null,
+        email: string,
+        address: string,
         finalAmount: number,
         comment: string,
         bankDetail: boolean,
-        qrType: string,
+        qrType: QRTypeReva | null,
         endDate: string | null
  ): Promise<object>;
 -Description: This method creates a new Reva order.
 
 9.Create Seva Order
 const createSevaOrder = await serviceFactory.createSevaOrder(
-        fullname: string,
-        benefiary_bank_code: string,
-        benefiary_account_no: string,
-        productCode: string,
-        distributorOrderNumber: string,
+        productCode: string | null,
         phone: string,
-        email: string | null,
-        address: string | null,
+        fullname: string,
         finalAmount: number,
+        distributorOrderNumber: string,
+        benefiaryBankCode: string,
+        benefiaryAccountNo: string,
         comment: string,
-        bankDetail: boolean,
-        qrType: string,
-        endDate: string | null
+        sourceAccountNo:string
 ): Promise<object>;
 -Description: This method creates a new Seva order.
 

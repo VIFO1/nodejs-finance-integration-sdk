@@ -6,8 +6,7 @@ export enum QRTypeReva {
 interface BodyCreateRevaOrderInterface
 {
     fullname: string ,
-    benefiary_bank_code: string,
-    benefiary_account_no: string,
+    benefiary_account_name:string,
     product_code:string | null,
     distributor_order_number:string ,
     phone: string,

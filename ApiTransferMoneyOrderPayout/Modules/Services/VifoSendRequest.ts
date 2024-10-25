@@ -24,7 +24,7 @@ class VifoSendRequest implements VifoSendRequestInterface {
             const response = await axios({
                 method: method,
                 url: url,
-                headers: headers,
+                  headers: headers,
                 data: body
             });
             return {
