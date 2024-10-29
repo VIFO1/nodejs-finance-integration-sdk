@@ -241,7 +241,7 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
             benefiary_bank_code: benefiaryBankCode,
             benefiary_account_no: benefiaryAccountNo,
             comment: comment,
-            "source account no" : sourceAccountNo
+            source_account_no : sourceAccountNo
         };
 
         const headers = this.getAuthorizationHeaders('user');

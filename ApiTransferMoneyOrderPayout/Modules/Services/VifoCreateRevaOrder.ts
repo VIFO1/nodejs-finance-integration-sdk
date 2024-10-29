@@ -10,7 +10,7 @@ class VifoCreateRevaOrder implements VifoCreateRevaOrderInterface {
         this.sendRequest = new VifoSendRequest();
     }
 
-    validateRevaOrder(headers: HeaderInterface, body: object): string[] {
+    private validateRevaOrder(headers: HeaderInterface, body: object): string[] {
         const errors = [];
         if (typeof headers !== 'object') {
             errors.push('headers must be a non-empty object');

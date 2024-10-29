@@ -13,7 +13,7 @@ interface BodyCreateSevaOrderInterface
     benefiary_bank_code: string,
     benefiary_account_no: string,
     comment: string,
-    "source account no": string
+    source_account_no: string
 }
 
 export default BodyCreateSevaOrderInterface;

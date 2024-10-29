@@ -9,7 +9,7 @@ class VifoCreateSevaOrder implements VifoCreateSevaOrderInterface {
     constructor() {
         this.sendRequest = new VifoSendRequest();
     }
-    validateSevaOrder(headers: HeaderInterface, body: object): string[] {
+    private validateSevaOrder(headers: HeaderInterface, body: object): string[] {
         const errors = [];
         if (typeof headers !== 'object') {
             errors.push('headers must be a non-empty object');
