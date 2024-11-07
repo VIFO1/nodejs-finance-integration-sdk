@@ -5,19 +5,15 @@ export enum QRTypeSeva {
 
 interface BodyCreateSevaOrderInterface
 {
+    product_code:string | null,
+    phone: string,
     fullname: string ,
+    final_amount: number,
+    distributor_order_number:string ,
     benefiary_bank_code: string,
     benefiary_account_no: string,
-    product_code:string,
-    distributor_order_number:string ,
-    phone: string,
-    email: string | null,
-    address: string | null,
-    final_amount: number,
     comment: string,
-    bank_detail: boolean | null,
-    qr_type : QRTypeSeva | null ,
-    end_date : string | null,
+    source_account_no: string
 }
 
 export default BodyCreateSevaOrderInterface;

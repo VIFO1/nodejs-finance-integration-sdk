@@ -178,9 +178,8 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
 
     async createRevaOrder(
         fullname: string,
-        benefiaryBankCode: string,
-        benefiaryAccountNo: string,
-        productCode: string,
+        benefiaryAccountName:string,
+        productCode: string | null,
         distributorOrderNumber: string,
         phone: string,
         email: string,
@@ -190,12 +189,13 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
         bankDetail: boolean,
         qrType: QRTypeReva | null,
         endDate: string | null
+
     ): Promise<object> {
+        const actualProductCodeReva = productCode || 'REVAVF240101';
         const body: BodyCreateRevaOrderInterface = {
             fullname: fullname,
-            benefiary_bank_code: benefiaryBankCode,
-            benefiary_account_no: benefiaryAccountNo,
-            product_code: productCode,
+            benefiary_account_name:benefiaryAccountName,
+            product_code: actualProductCodeReva,
             distributor_order_number: distributorOrderNumber,
             phone: phone,
             email: email,
@@ -220,34 +220,28 @@ class VifoServiceFactory implements VifoServiceFactoryInterface {
     }
 
     async createSevaOrder(
+        productCode: string | null,
+        phone: string,
         fullname: string,
+        finalAmount: number,
+        distributorOrderNumber: string,
         benefiaryBankCode: string,
         benefiaryAccountNo: string,
-        productCode: string,
-        distributorOrderNumber: string,
-        phone: string,
-        email: string,
-        address: string,
-        finalAmount: number,
         comment: string,
-        bankDetail: boolean,
-        qrType: QRTypeSeva | null,
-        endDate: string | null
+        sourceAccountNo: string
+
     ): Promise<object> {
+        const actualProductCodeSeva = productCode || 'SEVAVF240101';
         const body: BodyCreateSevaOrderInterface = {
+            product_code: actualProductCodeSeva,
+            phone: phone,
             fullname: fullname,
+            final_amount: finalAmount,
+            distributor_order_number: distributorOrderNumber,
             benefiary_bank_code: benefiaryBankCode,
             benefiary_account_no: benefiaryAccountNo,
-            product_code: productCode,
-            distributor_order_number: distributorOrderNumber,
-            phone: phone,
-            email: email,
-            address: address,
-            final_amount: finalAmount,
             comment: comment,
-            bank_detail: bankDetail,
-            qr_type: qrType,
-            end_date: endDate,
+            source_account_no : sourceAccountNo
         };
 
         const headers = this.getAuthorizationHeaders('user');

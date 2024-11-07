@@ -4,7 +4,6 @@ import BodyBeneficiaryName from "./BodyBeneficiaryName";
 import BodyApproveTransferMoney from "./BodyApproveTransferMoney";
 import BodyTransferMoneyInterface from "./BodyTransferMoneyInterface";
 import BodyWebhookInterface from "./BodyWebhookInterface";
-import { QRTypeSeva } from '../Interfaces/BodyCreateSevaOrderInterface';
 import { QRTypeReva } from '../Interfaces/BodyCreateRevaOrderInterface';
 interface VifoServiceFactoryInterface {
     setTokenUser(token: string): void;
@@ -29,9 +28,8 @@ interface VifoServiceFactoryInterface {
 
     createRevaOrder(
         fullname: string,
-        benefiaryBankCode: string,
-        benefiaryAccountNo: string,
-        productCode: string,
+        benefiaryAccountName:string,
+        productCode: string | null,
         distributorOrderNumber: string,
         phone: string,
         email: string,
@@ -44,19 +42,15 @@ interface VifoServiceFactoryInterface {
     ): Promise<object>;
 
     createSevaOrder(
+        productCode: string | null,
+        phone: string,
         fullname: string,
+        finalAmount: number,
+        distributorOrderNumber: string,
         benefiaryBankCode: string,
         benefiaryAccountNo: string,
-        productCode: string,
-        distributorOrderNumber: string,
-        phone: string,
-        email: string,
-        address: string,
-        finalAmount: number,
         comment: string,
-        bankDetail: boolean,
-        qrType: QRTypeSeva | null,
-        endDate: string | null
+        sourceAccountNo:string
     ): Promise<object>;
 
 }
